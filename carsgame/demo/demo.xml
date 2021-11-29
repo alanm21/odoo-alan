@@ -1,0 +1,11 @@
+<odoo>
+    <data>
+          <record id="piloto1" model="carsgame.piloto">
+            <field name="name">Marcus</field>
+          </record>
+
+          <record id="piloto2" model="carsgame.piloto">
+            <field name="name">Bruno</field>
+          </record>
+    </data>
+</odoo>

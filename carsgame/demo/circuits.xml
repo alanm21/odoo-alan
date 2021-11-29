@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+          <record id="carsgame.circuito1" model="carsgame.circuito">
+            <field name="name">Yas Marina</field>
+          </record>
+
+          <record id="carsgame.circuito2" model="carsgame.circuito">
+            <field name="name">Portimao</field>
+          </record>
+
+          <record id="carsgame.circuito3" model="carsgame.circuito">
+            <field name="name">Silverstone</field>
+          </record>
+
+          <record id="carsgame.circuito4" model="carsgame.circuito">
+            <field name="name">Abu Dhabi</field>
+          </record>
+    </data>
+</odoo>

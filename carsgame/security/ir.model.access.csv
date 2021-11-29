@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_carsgame_piloto,carsgame.piloto,model_carsgame_piloto,base.group_user,1,1,1,1
+access_carsgame_escuderia,carsgame.escuderia,model_carsgame_escuderia,base.group_user,1,1,1,1
+access_carsgame_circuito,carsgame.circuito,model_carsgame_circuito,base.group_user,1,1,1,1

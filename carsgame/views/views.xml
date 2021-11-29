@@ -1,0 +1,343 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <!-- Vista tree del model Piloto -->
+    <record model="ir.ui.view" id="carsgame.piloto_list">
+      <field name="name">carsgame piloto list</field>
+      <field name="model">carsgame.piloto</field>
+      <field name="arch" type="xml">
+        <tree decoration-warning="votos_final_carrera>100000">
+          <field name="name" />
+          <field name="car" />
+          <field name="victories" />
+          <field name="country_of_birth" />
+          <field name="photo" />
+          <field name="favourite_circuit" />
+          <field name="escuderia" />
+          <field name="votos_final_carrera" />
+          <field name="is_pilot" />
+        </tree>
+      </field>
+    </record>
+
+    <!-- Vista search del model Piloto -->
+    <record model="ir.ui.view" id="carsgame.piloto_search">
+      <field name="name">carsgame piloto search</field>
+      <field name="model">carsgame.piloto</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name" decoration-warning="name" />
+          <field name="victories" />
+          <field name="escuderia" />
+          <filter name="group_by_escuderia" string="Group by escuderia" context="{'group_by': 'escuderia'}"></filter>
+          <field name="votos_final_carrera" string="Min votos" filter_domain="[('votos_final_carrera','>',self)]" />
+          <filter name="votos_final_carrera" string="Min votos 200.000" domain="[('votos_final_carrera','>',200000)]"></filter>
+        </search>
+      </field>
+    </record>
+
+    <!-- Vista form del model Piloto -->
+    <record model="ir.ui.view" id="carsgame.piloto_form">
+      <field name="name">carsgame piloto form</field>
+      <field name="model">carsgame.piloto</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button name="regenerar_votos" type="object" icon="fa-repeat" string="Regenerar votos final carrera"></button>
+            <field name="state" widget="statusbar"></field>
+          </header>
+          <sheet>
+            <separator string="Informacio del pilot"></separator>
+            <field name="photo" widget="image" />
+            <group>
+              <group>
+                <field name="name" decoration-warning="name" />
+                <field name="car" attrs="{
+                    'invisible':[('is_pilot','=',False)],
+                    'required':[('is_pilot','=',True)],
+                  }" />
+                <field name="victories" />
+                <field name="country_of_birth" />
+              </group>
+              <group>
+                <field name="favourite_circuit" />
+                <field name="escuderia" />
+                <field name="votos_final_carrera" />
+                <field name="is_pilot" />
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Vista Kanban del model Piloto -->
+    <record model="ir.ui.view" id="carsgame.pilotos_kanban_cards">
+      <field name="name">Pilots</field>
+      <field name="model">carsgame.piloto</field>
+      <field name="type">kanban</field>
+      <field name="arch" type="xml">
+        <kanban default_group_by="escuderia">
+          <field name="id" />
+          <field name="escuderia" />
+          <templates>
+            <t t-name="kanban-box">
+              <!-- class="oe_resource_vignette" style="border-radius: 15px;" -->
+              <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.escuderia.raw_value)}}">
+                <div class="oe_resource_image">
+                  <a type="open">
+                    <img class="oe_kanban_image" alt="Imagen piloto" t-att-src="kanban_image('carsgame.piloto', 'photo', record.id.value)" />
+                  </a>
+                </div>
+                <div class="oe_resource_details" style="padding-top: 5%;">
+                  <ul>
+                    <li>
+                      <field name="name" />
+                    </li>
+                    <li>
+                      <field name="car" />
+                    </li>
+                    <li>
+                      <field name="escuderia" />
+                    </li>
+                    <li>
+                      <field name="votos_final_carrera" />
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- Vista del model Escuderia -->
+    <record model="ir.ui.view" id="carsgame.escuderia_list">
+      <field name="name">carsgame escuderia list</field>
+      <field name="model">carsgame.escuderia</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" decoration-warning="name" />
+          <field name="pilotos" />
+          <field name="circuitos" />
+          <field name="piloto_lider_escuderia" decoration-warning="piloto_lider_escuderia" />
+          <field name="photo_escuderia" />
+        </tree>
+      </field>
+    </record>
+
+    <!-- Vista form del model Escuderia -->
+    <record model="ir.ui.view" id="carsgame.escuderia_form">
+      <field name="name">carsgame escuderia form</field>
+      <field name="model">carsgame.escuderia</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <separator string="Informacio de la escuderia"></separator>
+            <!--<field name="photo_escuderia" widget="image"/>-->
+            <group>
+              <field name="name" decoration-warning="name" />
+              <field name="piloto_lider_escuderia" decoration-warning="piloto_lider_escuderia" />
+            </group>
+            <notebook>
+              <page string="Pilotos">
+                <field name="pilotos">
+                <kanban>
+                  <field name="id" />
+                  <templates>
+                    <t t-name="kanban-box">
+                      <div>
+                        <a type="open">
+                          <div class="oe_resource_image">
+                            <a type="open">
+                              <img class="oe_kanban_image" alt="Imagen piloto" t-att-src="kanban_image('carsgame.piloto', 'photo', record.id.value)" />
+                            </a>
+                          </div>
+                          <div class="oe_resource_details" style="padding-top: 5%;">
+                            <ul>
+                              <li>
+                                <field name="name" />
+                              </li>
+                            </ul>
+                          </div>
+                        </a>
+                      </div>
+                    </t>
+                  </templates>
+                </kanban>
+                </field>
+
+                <!--<field name="pilotos">
+                  <tree>
+                    <field name="name" />
+                    <field name="car" />
+                    <field name="country_of_birth" />
+                  </tree>
+                </field>-->
+              </page>
+              <page string="Circuitos">
+                <field name="circuitos">
+                  <tree>
+                    <field name="name" />
+                    <field name="numero_asistentes_carrera" />
+                    <field name="dia_de_la_carrera" />
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Vista Kanban del model Escuderia -->
+    <record model="ir.ui.view" id="carsgame.escuderias_kanban_cards">
+      <field name="name">Escuderias</field>
+      <field name="model">carsgame.escuderia</field>
+      <field name="type">kanban</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="id" />
+          <templates>
+            <t t-name="kanban-box">
+              <!-- class="oe_resource_vignette" style="border-radius: 15px;" -->
+              <div>
+                <a type="open">
+                  <div class="oe_resource_image">
+                    <a type="open">
+                      <img class="oe_kanban_image" alt="Imagen escuderia" t-att-src="kanban_image('carsgame.escuderia', 'photo_escuderia', record.id.value)" />
+                    </a>
+                  </div>
+                  <div class="oe_resource_details" style="padding-top: 5%;">
+                    <ul>
+                      <li>
+                        <field name="name" />
+                      </li>
+                      <!--
+                      <li>
+                        <field name="pilotos" />
+                      </li>
+                      <li>
+                        <field name="circuitos" />
+                      </li>-->
+                      <li>
+                        <field name="piloto_lider_escuderia" decoration-warning="piloto_lider_escuderia" />
+                      </li>
+                    </ul>
+                  </div>
+                </a>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- Vista del model Circuito -->
+    <record model="ir.ui.view" id="carsgame.circuito_list">
+      <field name="name">carsgame escuderia list</field>
+      <field name="model">carsgame.circuito</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" decoration-warning="name" />
+          <field name="numero_asistentes_carrera" />
+          <field name="escuderia" />
+          <field name="dia_de_la_carrera" />
+          <field name="dia_final_de_la_carrera" />
+        </tree>
+      </field>
+    </record>
+
+    <!-- Vista form del model Circuito -->
+    <record model="ir.ui.view" id="carsgame.circuito_form">
+      <field name="name">carsgame circuito form</field>
+      <field name="model">carsgame.circuito</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button name="crear_circuit" type="object" icon="fa-pencil" string="Crear nou circuit"></button>
+          </header>
+          <sheet>
+            <separator string="Informacio del circuit"></separator>
+            <group>
+              <field name="name" decoration-warning="name" />
+              <field name="numero_asistentes_carrera" />
+            </group>
+            <notebook>
+              <page string="Escuderies que tenen el circuit com a favorit">
+                <field name="escuderia">
+                  <tree>
+                    <field name="name" />
+                    <field name="pilotos" />
+                    <field name="piloto_lider_escuderia" />
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+            <group>
+              <field name="dia_de_la_carrera" />
+              <field name="dia_final_de_la_carrera" />
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="carsgame.circuito_calendar">
+      <field name="name">Carsgame circuito calendar</field>
+      <field name="model">carsgame.circuito</field>
+      <field name="arch" type="xml">
+        <calendar string="Circuito Calendar" date_start="dia_de_la_carrera" date_stop="dia_final_de_la_carrera" color="name">
+          <field name="name" />
+        </calendar>
+      </field>
+    </record>
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="carsgame.action_piloto_window">
+      <field name="name">Carsgame Piloto Window</field>
+      <field name="res_model">carsgame.piloto</field>
+      <field name="view_mode">tree,form,kanban</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="carsgame.action_escuderia_window">
+      <field name="name">Carsgame Escuderia Window</field>
+      <field name="res_model">carsgame.escuderia</field>
+      <field name="view_mode">tree,form,kanban</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="carsgame.action_circuito_window">
+      <field name="name">Carsgame Circuito Window</field>
+      <field name="res_model">carsgame.circuito</field>
+      <field name="view_mode">tree,form,calendar</field>
+    </record>
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="carsgame.action_server">
+      <field name="name">carsgame server</field>
+      <field name="model_id" ref="model_carsgame_carsgame"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+    <menuitem name="Carsgame" id="carsgame.menu_root" />
+    <!-- menu categories -->
+    <menuitem name="Managment" id="carsgame.menu_1" parent="carsgame.menu_root" />
+    <!-- actions -->
+    <menuitem name="Pilotos" id="carsgame.menu_piloto_list" parent="carsgame.menu_1" action="carsgame.action_piloto_window" />
+    <menuitem name="Escuderias" id="carsgame.menu_escuderia_list" parent="carsgame.menu_1" action="carsgame.action_escuderia_window" />
+    <menuitem name="Circuitos" id="carsgame.menu_circuito_list" parent="carsgame.menu_1" action="carsgame.action_circuito_window" />
+
+  </data>
+</odoo>
